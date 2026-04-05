@@ -1,4 +1,4 @@
-export const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://martiariza.es'
+export const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://martiariza.com/'
 
 export const siteConfig = {
   name: 'Martí Ariza',

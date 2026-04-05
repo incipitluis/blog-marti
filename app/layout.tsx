@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google"
 import { Lora } from "next/font/google"
 import "./globals.css"
 import { siteUrl, siteConfig } from "@/lib/site"
+import { PageLogger } from "@/components/page-logger"
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -90,7 +91,10 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
         />
       </head>
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col">
+        <PageLogger />
+        {children}
+      </body>
     </html>
   )
 }
