@@ -34,7 +34,7 @@ export function Footer() {
               Contacto
             </p>
             <div className="mt-3 flex flex-col gap-2 text-sm text-background/70">
-              <p>marti.ariza@ejemplo.com</p>
+              <p>martiari@ucm.es</p>
             </div>
           </div>
         </div>
