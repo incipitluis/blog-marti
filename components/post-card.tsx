@@ -22,9 +22,9 @@ export function PostCard({ post }: { post: Post }) {
         </div>
       )}
       <div className="flex flex-1 flex-col p-5">
-        {post.categories && (
+        {post.blog_categories && (
           <span className="mb-2 text-xs font-medium uppercase tracking-wider text-accent">
-            {post.categories.name}
+            {post.blog_categories.name}
           </span>
         )}
         <h3 className="font-serif text-lg font-semibold leading-snug text-foreground group-hover:text-accent transition-colors">

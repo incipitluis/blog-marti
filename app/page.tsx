@@ -1,11 +1,10 @@
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
-import type { Post, Category } from '@/lib/types'
+import type { Post, Category, AboutContent } from '@/lib/types'
 import { Nav } from '@/components/nav'
 import { Footer } from '@/components/footer'
 import { PostCard } from '@/components/post-card'
 import { CategoryBadge } from '@/components/category-badge'
-import { ContactBlock } from '@/components/contact-block'
 import { FadeIn } from '@/components/fade-in'
 
 export default async function Home() {
@@ -13,15 +12,31 @@ export default async function Home() {
 
   const { data: posts } = await supabase
     .from('posts')
-    .select('*, categories(*)')
+    .select('*, blog_categories(*)')
     .eq('published', true)
     .order('published_at', { ascending: false })
     .limit(3)
 
   const { data: categories } = await supabase
-    .from('categories')
+    .from('blog_categories')
     .select('*')
     .order('name')
+
+  const { data: aboutData } = await supabase
+    .from('about_content')
+    .select('*')
+    .eq('id', 'marti-ariza')
+    .single()
+
+  const about = aboutData as AboutContent | null
+
+  const aboutHeading = about?.heading ?? 'Sobre Martí Ariza'
+  const aboutParagraphs = about?.body
+    ? about.body.split('\n')
+    : [
+      'Psiquiatra dedicado a la salud mental comunitaria, con especial interés en los determinantes sociales de la salud mental y la intervención en contextos de vulnerabilidad.',
+      'Este blog nace como un espacio para compartir reflexiones, análisis y evidencias sobre la intersección entre psiquiatría, sociedad y cuidado colectivo.',
+    ]
 
   return (
     <>
@@ -123,17 +138,22 @@ export default async function Home() {
               <div className="grid items-center gap-10 md:grid-cols-2">
                 <div>
                   <h2 className="font-serif text-2xl font-semibold text-foreground md:text-3xl">
-                    Sobre Martí Ariza
+                    {aboutHeading}
                   </h2>
-                  <p className="mt-4 leading-relaxed text-secondary">
-                    Psiquiatra dedicado a la salud mental comunitaria, con especial interés
-                    en los determinantes sociales de la salud mental y la intervención
-                    en contextos de vulnerabilidad.
-                  </p>
-                  <p className="mt-3 leading-relaxed text-secondary">
-                    Este blog nace como un espacio para compartir reflexiones, análisis
-                    y evidencias sobre la intersección entre psiquiatría, sociedad y cuidado colectivo.
-                  </p>
+                  {aboutParagraphs.map((p, i) => (
+                    <p key={i} className={`${i === 0 ? 'mt-4' : 'mt-3'} leading-relaxed text-secondary`}>
+                      {p}
+                    </p>
+                  ))}
+                  <a
+                    href="mailto:martiari@ucm.es"
+                    className="mt-5 inline-flex items-center gap-2 text-sm font-medium text-accent transition-colors hover:text-accent-light"
+                  >
+                    <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                    </svg>
+                    martiari@ucm.es
+                  </a>
                 </div>
                 <div className="flex justify-center">
                   <div className="h-64 w-64 rounded-full bg-surface-alt border border-border flex items-center justify-center">
@@ -145,9 +165,6 @@ export default async function Home() {
           </div>
         </section>
 
-        <FadeIn>
-          <ContactBlock />
-        </FadeIn>
       </main>
       <Footer />
     </>

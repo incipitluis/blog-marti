@@ -5,7 +5,7 @@ import { PostEditor } from '../components/post-editor'
 export default async function NewPostPage() {
   const supabase = await createClient()
   const { data: categories } = await supabase
-    .from('categories')
+    .from('blog_categories')
     .select('*')
     .order('name')
 

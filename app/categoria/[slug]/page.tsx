@@ -12,7 +12,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const { slug } = await params
   const supabase = await createClient()
   const { data: category } = await supabase
-    .from('categories')
+    .from('blog_categories')
     .select('name')
     .eq('slug', slug)
     .single()
@@ -30,7 +30,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
   const supabase = await createClient()
 
   const { data: category } = await supabase
-    .from('categories')
+    .from('blog_categories')
     .select('*')
     .eq('slug', slug)
     .single()
@@ -41,7 +41,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
 
   const { data: posts } = await supabase
     .from('posts')
-    .select('*, categories(*)')
+    .select('*, blog_categories(*)')
     .eq('category_id', typedCategory.id)
     .eq('published', true)
     .order('published_at', { ascending: false })

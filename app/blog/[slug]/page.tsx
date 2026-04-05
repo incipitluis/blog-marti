@@ -31,7 +31,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
 
   const { data: post } = await supabase
     .from('posts')
-    .select('*, categories(*)')
+    .select('*, blog_categories(*)')
     .eq('slug', slug)
     .eq('published', true)
     .single()
@@ -59,12 +59,12 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
             </Link>
           </div>
 
-          {typedPost.categories && (
+          {typedPost.blog_categories && (
             <Link
-              href={`/categoria/${typedPost.categories.slug}`}
+              href={`/categoria/${typedPost.blog_categories.slug}`}
               className="text-xs font-medium uppercase tracking-wider text-accent"
             >
-              {typedPost.categories.name}
+              {typedPost.blog_categories.name}
             </Link>
           )}
 

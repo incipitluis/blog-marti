@@ -8,7 +8,7 @@ export default async function AdminDashboard() {
 
   const { data: posts } = await supabase
     .from('posts')
-    .select('*, categories(name)')
+    .select('*, blog_categories(name)')
     .order('created_at', { ascending: false })
 
   return (
@@ -43,7 +43,7 @@ export default async function AdminDashboard() {
                   </Link>
                 </td>
                 <td className="hidden px-4 py-3 text-secondary md:table-cell">
-                  {post.categories?.name || '—'}
+                  {post.blog_categories?.name || '—'}
                 </td>
                 <td className="px-4 py-3">
                   {post.published ? (

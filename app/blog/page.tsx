@@ -17,12 +17,12 @@ export default async function BlogPage() {
 
   const { data: posts } = await supabase
     .from('posts')
-    .select('*, categories(*)')
+    .select('*, blog_categories(*)')
     .eq('published', true)
     .order('published_at', { ascending: false })
 
   const { data: categories } = await supabase
-    .from('categories')
+    .from('blog_categories')
     .select('*')
     .order('name')
 

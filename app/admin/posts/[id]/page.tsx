@@ -16,7 +16,7 @@ export default async function EditPostPage({ params }: { params: Promise<{ id: s
   if (!post) notFound()
 
   const { data: categories } = await supabase
-    .from('categories')
+    .from('blog_categories')
     .select('*')
     .order('name')
 

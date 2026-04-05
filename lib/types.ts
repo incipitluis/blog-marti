@@ -1,3 +1,11 @@
+export type AboutContent = {
+  id: string
+  heading: string
+  body: string
+  image_url: string | null
+  updated_at: string | null
+}
+
 export type Category = {
   id: string
   name: string
@@ -17,5 +25,5 @@ export type Post = {
   published_at: string | null
   created_at: string
   updated_at: string
-  categories?: Category | null
+  blog_categories?: Category | null
 }
