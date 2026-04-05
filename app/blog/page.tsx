@@ -35,9 +35,6 @@ export default async function BlogPage() {
             <h1 className="font-serif text-3xl font-bold text-foreground md:text-4xl">
               Blog
             </h1>
-            <p className="mt-3 text-secondary">
-              Todos los artículos sobre psiquiatría social y salud mental comunitaria.
-            </p>
           </FadeIn>
 
           {(categories as Category[] | null)?.length ? (

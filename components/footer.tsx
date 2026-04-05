@@ -8,7 +8,7 @@ export function Footer() {
           <div>
             <p className="font-serif text-lg font-semibold">Martí Ariza</p>
             <p className="mt-2 text-sm text-background/60">
-              Psiquiatría social, salud mental comunitaria y reflexiones clínicas.
+              Filosofía, psiquiatría y estudios del trauma.
             </p>
           </div>
 
