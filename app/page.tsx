@@ -33,9 +33,7 @@ export default async function Home() {
   const aboutHeading = about?.heading ?? 'Sobre Martí Ariza'
   const aboutParagraphs = about?.body
     ? about.body.split('\n')
-    : [
-      'Psiquiatra dedicado a la salud mental comunitaria, con especial interés en los determinantes sociales de la salud mental y la intervención en contextos de vulnerabilidad.',
-      'Este blog nace como un espacio para compartir reflexiones, análisis y evidencias sobre la intersección entre psiquiatría, sociedad y cuidado colectivo.',
+    : ['Investigador predoctoral en el CSIC, experto en filosofía, psiquiatría y estudios del trauma',
     ]
 
   return (
@@ -46,11 +44,10 @@ export default async function Home() {
           <div className="mx-auto max-w-6xl px-6 py-24 md:py-32">
             <div className="max-w-2xl">
               <h1 className="animate-fade-in-up font-serif text-4xl font-bold leading-tight tracking-tight text-foreground md:text-5xl lg:text-6xl">
-                Psiquiatría Social
+                Filosofía, psiquiatría y estudios del trauma
               </h1>
               <p className="animate-fade-in-up-delay-1 mt-6 text-lg leading-relaxed text-secondary md:text-xl">
-                Un espacio de reflexión sobre salud mental comunitaria, práctica clínica
-                y los vínculos entre psiquiatría y sociedad.
+                Un espacio de reflexión sobre los fundamentos históricos, epistemológicos y sociales de la experiencia traumática y de los dispositivos clínicos que la interpretan
               </p>
               <p className="animate-fade-in-up-delay-2 mt-2 text-base text-muted">
                 Por Martí Ariza
