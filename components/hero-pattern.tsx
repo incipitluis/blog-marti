@@ -26,7 +26,7 @@ export function HeroPattern() {
 
   return (
     <svg
-      className="absolute inset-0 h-full w-full"
+      className="absolute inset-0 h-full w-full pointer-events-none"
       viewBox="0 0 1200 600"
       preserveAspectRatio="xMidYMid slice"
       xmlns="http://www.w3.org/2000/svg"
