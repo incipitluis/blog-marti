@@ -6,22 +6,46 @@ import type { Post } from '@/lib/types'
 import { Nav } from '@/components/nav'
 import { Footer } from '@/components/footer'
 import { TiptapRenderer } from '@/components/tiptap-renderer'
+import { siteUrl, siteConfig } from '@/lib/site'
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params
   const supabase = await createClient()
   const { data: post } = await supabase
     .from('posts')
-    .select('title, excerpt')
+    .select('title, excerpt, cover_image_url, published_at, updated_at')
     .eq('slug', slug)
     .eq('published', true)
     .single()
 
   if (!post) return { title: 'Artículo no encontrado' }
 
+  const url = `${siteUrl}/blog/${slug}`
+
   return {
     title: post.title,
     description: post.excerpt || undefined,
+    alternates: { canonical: url },
+    openGraph: {
+      type: 'article',
+      url,
+      title: post.title,
+      description: post.excerpt || undefined,
+      locale: 'es_ES',
+      siteName: siteConfig.name,
+      publishedTime: post.published_at || undefined,
+      modifiedTime: post.updated_at || undefined,
+      authors: [siteConfig.author],
+      images: post.cover_image_url
+        ? [{ url: post.cover_image_url, alt: post.title }]
+        : undefined,
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: post.title,
+      description: post.excerpt || undefined,
+      images: post.cover_image_url ? [post.cover_image_url] : undefined,
+    },
   }
 }
 
@@ -48,8 +72,39 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
       })
     : null
 
+  const articleSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: typedPost.title,
+    description: typedPost.excerpt || undefined,
+    url: `${siteUrl}/blog/${slug}`,
+    datePublished: typedPost.published_at || undefined,
+    dateModified: typedPost.updated_at || typedPost.published_at || undefined,
+    image: typedPost.cover_image_url || undefined,
+    author: {
+      '@type': 'Person',
+      name: siteConfig.author,
+      email: siteConfig.email,
+      url: siteUrl,
+    },
+    publisher: {
+      '@type': 'Person',
+      name: siteConfig.author,
+      url: siteUrl,
+    },
+    inLanguage: 'es',
+    ...(typedPost.blog_categories && {
+      articleSection: typedPost.blog_categories.name,
+      keywords: [typedPost.blog_categories.name, ...siteConfig.keywords].join(', '),
+    }),
+  }
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }}
+      />
       <Nav />
       <main className="flex-1 bg-background">
         <article className="mx-auto max-w-3xl px-6 py-16">
@@ -77,7 +132,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
             {date && (
               <>
                 <span className="text-border">·</span>
-                <time>{date}</time>
+                <time dateTime={typedPost.published_at || undefined}>{date}</time>
               </>
             )}
           </div>

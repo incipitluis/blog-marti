@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import type { Post, Category, AboutContent } from '@/lib/types'
@@ -6,6 +7,28 @@ import { Footer } from '@/components/footer'
 import { PostCard } from '@/components/post-card'
 import { CategoryBadge } from '@/components/category-badge'
 import { FadeIn } from '@/components/fade-in'
+import { HeroPattern } from '@/components/hero-pattern'
+import { siteUrl, siteConfig } from '@/lib/site'
+
+export const metadata: Metadata = {
+  alternates: { canonical: siteUrl },
+  openGraph: {
+    type: 'website',
+    url: siteUrl,
+    title: `${siteConfig.author} — Filosofía, psiquiatría y estudios del trauma`,
+    description: siteConfig.description,
+  },
+}
+
+const personSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: siteConfig.author,
+  email: siteConfig.email,
+  url: siteUrl,
+  jobTitle: 'Psiquiatra',
+  knowsAbout: siteConfig.keywords,
+}
 
 export default async function Home() {
   const supabase = await createClient()
@@ -38,6 +61,10 @@ export default async function Home() {
 
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(personSchema) }}
+      />
       <Nav />
       <main className="flex-1">
         <section className="relative overflow-hidden bg-surface">
@@ -65,7 +92,7 @@ export default async function Home() {
               </div>
             </div>
           </div>
-          <div className="absolute right-0 top-0 -z-10 h-full w-1/2 bg-gradient-to-l from-accent/5 to-transparent" />
+          <HeroPattern />
         </section>
 
         {(posts as Post[] | null)?.length ? (

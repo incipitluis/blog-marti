@@ -7,6 +7,7 @@ import { Nav } from '@/components/nav'
 import { Footer } from '@/components/footer'
 import { PostCard } from '@/components/post-card'
 import { FadeIn } from '@/components/fade-in'
+import { siteUrl, siteConfig } from '@/lib/site'
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params
@@ -19,9 +20,21 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
   if (!category) return { title: 'Categoría no encontrada' }
 
+  const url = `${siteUrl}/categoria/${slug}`
+  const description = `Artículos sobre ${category.name} — filosofía, psiquiatría y estudios del trauma.`
+
   return {
     title: category.name,
-    description: `Artículos sobre ${category.name}.`,
+    description,
+    alternates: { canonical: url },
+    openGraph: {
+      type: 'website',
+      url,
+      title: `${category.name} | ${siteConfig.author}`,
+      description,
+      siteName: siteConfig.name,
+      locale: 'es_ES',
+    },
   }
 }
 

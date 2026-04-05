@@ -6,10 +6,21 @@ import { Footer } from '@/components/footer'
 import { PostCard } from '@/components/post-card'
 import { CategoryBadge } from '@/components/category-badge'
 import { FadeIn } from '@/components/fade-in'
+import { siteUrl, siteConfig } from '@/lib/site'
 
 export const metadata: Metadata = {
   title: 'Blog',
-  description: 'Artículos sobre psiquiatría social, salud mental comunitaria y reflexiones clínicas.',
+  description: 'Artículos sobre filosofía del trauma, psiquiatría social y antropología de la experiencia traumática.',
+  keywords: siteConfig.keywords,
+  alternates: { canonical: `${siteUrl}/blog` },
+  openGraph: {
+    type: 'website',
+    url: `${siteUrl}/blog`,
+    title: `Blog | ${siteConfig.author}`,
+    description: 'Artículos sobre filosofía del trauma, psiquiatría social y antropología de la experiencia traumática.',
+    siteName: siteConfig.name,
+    locale: 'es_ES',
+  },
 }
 
 export default async function BlogPage() {
