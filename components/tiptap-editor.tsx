@@ -49,6 +49,11 @@ export function TiptapEditor({ content, onChange }: {
     ],
     content: content ?? undefined,
     immediatelyRender: false,
+    editorProps: {
+      attributes: {
+        class: 'prose-blog',
+      },
+    },
     onUpdate: ({ editor }) => {
       onChange(editor.getJSON() as Record<string, unknown>)
     },

@@ -16,7 +16,7 @@ function slugify(text: string): string {
     .replace(/(^-|-$)/g, '')
 }
 
-export function PostEditor({ post, categories }: {
+export function PostEditor({ post, categories: initialCategories }: {
   post?: Post
   categories: Category[]
 }) {
@@ -32,11 +32,43 @@ export function PostEditor({ post, categories }: {
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
+  const [categories, setCategories] = useState<Category[]>(initialCategories)
+  const [showNewCat, setShowNewCat] = useState(false)
+  const [newCatName, setNewCatName] = useState('')
+  const [creatingCat, setCreatingCat] = useState(false)
+  const [catError, setCatError] = useState<string | null>(null)
+
   function handleTitleChange(value: string) {
     setTitle(value)
     if (!isEditing || !post?.slug) {
       setSlug(slugify(value))
     }
+  }
+
+  async function handleCreateCategory() {
+    if (!newCatName.trim()) return
+    setCatError(null)
+    setCreatingCat(true)
+
+    const supabase = createClient()
+    const { data, error } = await supabase
+      .from('blog_categories')
+      .insert({ name: newCatName.trim(), slug: slugify(newCatName.trim()) })
+      .select()
+      .single()
+
+    if (error) {
+      setCatError(error.message)
+      setCreatingCat(false)
+      return
+    }
+
+    const created = data as Category
+    setCategories((prev) => [...prev, created].sort((a, b) => a.name.localeCompare(b.name)))
+    setCategoryId(created.id)
+    setNewCatName('')
+    setShowNewCat(false)
+    setCreatingCat(false)
   }
 
   async function handleSave(publish: boolean) {
@@ -121,19 +153,56 @@ export function PostEditor({ post, categories }: {
 
       <div className="grid gap-6 md:grid-cols-2">
         <div className="flex flex-col gap-2">
-          <label className="text-sm font-medium text-foreground">Categoría</label>
-          <select
-            value={categoryId}
-            onChange={(e) => setCategoryId(e.target.value)}
-            className="rounded-md border border-border bg-surface px-4 py-3 text-sm text-foreground focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
-          >
-            <option value="">Sin categoría</option>
-            {categories.map((cat) => (
-              <option key={cat.id} value={cat.id}>
-                {cat.name}
-              </option>
-            ))}
-          </select>
+          <div className="flex items-center justify-between">
+            <label className="text-sm font-medium text-foreground">Categoría</label>
+            <button
+              type="button"
+              onClick={() => { setShowNewCat((v) => !v); setCatError(null); setNewCatName('') }}
+              className="text-xs font-medium text-accent transition-colors hover:text-accent-light"
+            >
+              {showNewCat ? 'Cancelar' : '+ Nueva categoría'}
+            </button>
+          </div>
+
+          {showNewCat ? (
+            <div className="flex flex-col gap-2">
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={newCatName}
+                  onChange={(e) => setNewCatName(e.target.value)}
+                  onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleCreateCategory() } }}
+                  placeholder="Nombre de la categoría"
+                  autoFocus
+                  className="flex-1 rounded-md border border-border bg-surface px-4 py-3 text-sm text-foreground placeholder:text-muted focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
+                />
+                <button
+                  type="button"
+                  onClick={handleCreateCategory}
+                  disabled={creatingCat || !newCatName.trim()}
+                  className="rounded-md bg-accent px-4 py-3 text-sm font-medium text-white transition-colors hover:bg-accent-light disabled:opacity-50"
+                >
+                  {creatingCat ? '...' : 'Crear'}
+                </button>
+              </div>
+              {catError && (
+                <p className="text-xs text-red-600">{catError}</p>
+              )}
+            </div>
+          ) : (
+            <select
+              value={categoryId}
+              onChange={(e) => setCategoryId(e.target.value)}
+              className="rounded-md border border-border bg-surface px-4 py-3 text-sm text-foreground focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
+            >
+              <option value="">Sin categoría</option>
+              {categories.map((cat) => (
+                <option key={cat.id} value={cat.id}>
+                  {cat.name}
+                </option>
+              ))}
+            </select>
+          )}
         </div>
 
         <div className="flex flex-col gap-2">

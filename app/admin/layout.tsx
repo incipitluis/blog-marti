@@ -27,6 +27,9 @@ export default async function AdminLayout({ children }: { children: React.ReactN
               <Link href="/admin/posts/new" className="text-sm text-secondary transition-colors hover:text-foreground">
                 Nuevo post
               </Link>
+              <Link href="/admin/categories" className="text-sm text-secondary transition-colors hover:text-foreground">
+                Categorías
+              </Link>
               <Link href="/admin/about" className="text-sm text-secondary transition-colors hover:text-foreground">
                 Sobre
               </Link>
