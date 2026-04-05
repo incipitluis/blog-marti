@@ -1,65 +1,155 @@
-import Image from "next/image";
+import Link from 'next/link'
+import { createClient } from '@/lib/supabase/server'
+import type { Post, Category } from '@/lib/types'
+import { Nav } from '@/components/nav'
+import { Footer } from '@/components/footer'
+import { PostCard } from '@/components/post-card'
+import { CategoryBadge } from '@/components/category-badge'
+import { ContactBlock } from '@/components/contact-block'
+import { FadeIn } from '@/components/fade-in'
 
-export default function Home() {
+export default async function Home() {
+  const supabase = await createClient()
+
+  const { data: posts } = await supabase
+    .from('posts')
+    .select('*, categories(*)')
+    .eq('published', true)
+    .order('published_at', { ascending: false })
+    .limit(3)
+
+  const { data: categories } = await supabase
+    .from('categories')
+    .select('*')
+    .order('name')
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
+    <>
+      <Nav />
+      <main className="flex-1">
+        <section className="relative overflow-hidden bg-surface">
+          <div className="mx-auto max-w-6xl px-6 py-24 md:py-32">
+            <div className="max-w-2xl">
+              <h1 className="animate-fade-in-up font-serif text-4xl font-bold leading-tight tracking-tight text-foreground md:text-5xl lg:text-6xl">
+                Psiquiatría Social
+              </h1>
+              <p className="animate-fade-in-up-delay-1 mt-6 text-lg leading-relaxed text-secondary md:text-xl">
+                Un espacio de reflexión sobre salud mental comunitaria, práctica clínica
+                y los vínculos entre psiquiatría y sociedad.
+              </p>
+              <p className="animate-fade-in-up-delay-2 mt-2 text-base text-muted">
+                Por Martí Ariza
+              </p>
+              <div className="animate-fade-in-up-delay-3 mt-8">
+                <Link
+                  href="/blog"
+                  className="inline-flex items-center rounded-md bg-accent px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-accent-light"
+                >
+                  Leer artículos
+                  <svg className="ml-2 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                  </svg>
+                </Link>
+              </div>
+            </div>
+          </div>
+          <div className="absolute right-0 top-0 -z-10 h-full w-1/2 bg-gradient-to-l from-accent/5 to-transparent" />
+        </section>
+
+        {(posts as Post[] | null)?.length ? (
+          <section className="bg-background py-20">
+            <div className="mx-auto max-w-6xl px-6">
+              <FadeIn>
+                <div className="flex items-end justify-between">
+                  <h2 className="font-serif text-2xl font-semibold text-foreground md:text-3xl">
+                    Últimos artículos
+                  </h2>
+                  <Link href="/blog" className="text-sm font-medium text-accent transition-colors hover:text-accent-light">
+                    Ver todos &rarr;
+                  </Link>
+                </div>
+              </FadeIn>
+              <div className="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                {(posts as Post[]).map((post, i) => (
+                  <FadeIn key={post.id} delay={i * 0.1}>
+                    <PostCard post={post} />
+                  </FadeIn>
+                ))}
+              </div>
+            </div>
+          </section>
+        ) : (
+          <section className="bg-background py-20">
+            <div className="mx-auto max-w-6xl px-6">
+              <FadeIn>
+                <div className="rounded-lg border border-border bg-surface p-12 text-center">
+                  <h2 className="font-serif text-2xl font-semibold text-foreground">
+                    Próximamente
+                  </h2>
+                  <p className="mt-3 text-secondary">
+                    Los artículos se publicarán pronto. ¡Vuelve a visitarnos!
+                  </p>
+                </div>
+              </FadeIn>
+            </div>
+          </section>
+        )}
+
+        {(categories as Category[] | null)?.length ? (
+          <section id="categorias" className="bg-surface-alt py-20">
+            <div className="mx-auto max-w-6xl px-6">
+              <FadeIn>
+                <h2 className="font-serif text-2xl font-semibold text-foreground md:text-3xl">
+                  Categorías
+                </h2>
+                <p className="mt-3 text-secondary">
+                  Explora los artículos por temática.
+                </p>
+              </FadeIn>
+              <FadeIn delay={0.1}>
+                <div className="mt-8 flex flex-wrap gap-3">
+                  {(categories as Category[]).map((cat) => (
+                    <CategoryBadge key={cat.id} category={cat} />
+                  ))}
+                </div>
+              </FadeIn>
+            </div>
+          </section>
+        ) : null}
+
+        <section className="bg-surface py-20">
+          <div className="mx-auto max-w-6xl px-6">
+            <FadeIn>
+              <div className="grid items-center gap-10 md:grid-cols-2">
+                <div>
+                  <h2 className="font-serif text-2xl font-semibold text-foreground md:text-3xl">
+                    Sobre Martí Ariza
+                  </h2>
+                  <p className="mt-4 leading-relaxed text-secondary">
+                    Psiquiatra dedicado a la salud mental comunitaria, con especial interés
+                    en los determinantes sociales de la salud mental y la intervención
+                    en contextos de vulnerabilidad.
+                  </p>
+                  <p className="mt-3 leading-relaxed text-secondary">
+                    Este blog nace como un espacio para compartir reflexiones, análisis
+                    y evidencias sobre la intersección entre psiquiatría, sociedad y cuidado colectivo.
+                  </p>
+                </div>
+                <div className="flex justify-center">
+                  <div className="h-64 w-64 rounded-full bg-surface-alt border border-border flex items-center justify-center">
+                    <span className="font-serif text-6xl text-muted">MA</span>
+                  </div>
+                </div>
+              </div>
+            </FadeIn>
+          </div>
+        </section>
+
+        <FadeIn>
+          <ContactBlock />
+        </FadeIn>
       </main>
-    </div>
-  );
+      <Footer />
+    </>
+  )
 }
