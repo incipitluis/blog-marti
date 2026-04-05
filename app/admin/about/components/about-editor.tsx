@@ -3,6 +3,7 @@
 import { useState, type FormEvent } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import type { AboutContent } from '@/lib/types'
+import { ImageUpload } from '@/components/image-upload'
 
 export function AboutEditor({ about }: { about: AboutContent | null }) {
   const [heading, setHeading] = useState(
@@ -18,6 +19,7 @@ export function AboutEditor({ about }: { about: AboutContent | null }) {
       ? (about.body.split('\n')[1] ?? '')
       : 'Este blog nace como un espacio para compartir reflexiones, análisis y evidencias sobre la intersección entre psiquiatría, sociedad y cuidado colectivo.',
   )
+  const [imageUrl, setImageUrl] = useState(about?.image_url ?? '')
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
@@ -36,6 +38,7 @@ export function AboutEditor({ about }: { about: AboutContent | null }) {
       id: 'marti-ariza',
       heading,
       body,
+      image_url: imageUrl || null,
     })
 
     if (error) {
@@ -93,6 +96,14 @@ export function AboutEditor({ about }: { about: AboutContent | null }) {
           placeholder="Información adicional (opcional)..."
           className="resize-none rounded-md border border-border bg-surface px-4 py-3 text-sm text-foreground placeholder:text-muted focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
         />
+      </div>
+
+      <div className="flex flex-col gap-2">
+        <label className="text-sm font-medium text-foreground">Foto</label>
+        <p className="text-xs text-muted">Se mostrará en forma circular en la página principal.</p>
+        <div className="max-w-xs">
+          <ImageUpload value={imageUrl} onChange={setImageUrl} bucket="post-images" />
+        </div>
       </div>
 
       <div className="flex items-center gap-3 border-t border-border pt-6">

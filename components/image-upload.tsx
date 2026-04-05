@@ -6,9 +6,11 @@ import { createClient } from '@/lib/supabase/client'
 export function ImageUpload({
   value,
   onChange,
+  bucket = 'post-images',
 }: {
   value: string
   onChange: (url: string) => void
+  bucket?: string
 }) {
   const inputRef = useRef<HTMLInputElement>(null)
   const [uploading, setUploading] = useState(false)
@@ -23,7 +25,7 @@ export function ImageUpload({
     const path = `${crypto.randomUUID()}.${ext}`
 
     const { error: uploadError } = await supabase.storage
-      .from('post-images')
+      .from(bucket)
       .upload(path, file, { upsert: false })
 
     if (uploadError) {
@@ -32,7 +34,7 @@ export function ImageUpload({
       return
     }
 
-    const { data } = supabase.storage.from('post-images').getPublicUrl(path)
+    const { data } = supabase.storage.from(bucket).getPublicUrl(path)
     onChange(data.publicUrl)
     setUploading(false)
   }

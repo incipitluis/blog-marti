@@ -153,8 +153,16 @@ export default async function Home() {
                   </a>
                 </div>
                 <div className="flex justify-center">
-                  <div className="h-64 w-64 rounded-full bg-surface-alt border border-border flex items-center justify-center">
-                    <span className="font-serif text-6xl text-muted">MA</span>
+                  <div className="h-64 w-64 rounded-full bg-surface-alt border border-border flex items-center justify-center overflow-hidden">
+                    {about?.image_url ? (
+                      <img
+                        src={about.image_url}
+                        alt={aboutHeading}
+                        className="h-full w-full object-cover"
+                      />
+                    ) : (
+                      <span className="font-serif text-6xl text-muted">MA</span>
+                    )}
                   </div>
                 </div>
               </div>
